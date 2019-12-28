@@ -8,7 +8,6 @@
 //
 
 import Foundation
-import PDFKit
 import UIKit
 
 let defaultResolution: Int = 72
@@ -64,36 +63,18 @@ public class PDFGenerator {
     }
     
 
-    @objc public func add(content: String)-> NSMutableData?{
+    @objc public func render(content: String)-> NSMutableData?{
         //let attributedString = NSAttributedString(string: content, attributes: [NSAttributedString.Key.backgroundColor : UIColor.lightText])
         //let printFormatter = UISimpleTextPrintFormatter(attributedText: attributedString)
         let printFormatter = UIMarkupTextPrintFormatter(markupText: content)
-        return self.addFormatter(printFormatter: printFormatter)
+        return self.render(printFormatter: printFormatter)
     }
     
-    //https://github.com/SSA111/SwiftImageToPDFConverter/blob/master/NSData%2BImageToPDFConverter%2BSwift3.swift
-    @objc public func imageToPdfData(image: UIImage, horizontalResolution: Double, verticalResolution: Double) -> NSMutableData? {
-        
-        if horizontalResolution <= 0 || verticalResolution <= 0 {
-            return nil;
-        }
-        
-        let pageWidth: Double = Double(image.size.width) * Double(image.scale) * Double(defaultResolution) / horizontalResolution
-        let pageHeight: Double = Double(image.size.height) * Double(image.scale) * Double(defaultResolution) / verticalResolution
-        let pdfData: NSMutableData = NSMutableData()
-        let pdfConsumer: CGDataConsumer = CGDataConsumer(data: pdfData as CFMutableData)!
-        var mediaBox: CGRect = CGRect(x: 0, y: 0, width: CGFloat(pageWidth), height: CGFloat(pageHeight))
-        let pdfContext: CGContext = CGContext(consumer: pdfConsumer, mediaBox: &mediaBox, nil)!
-        pdfContext.beginPage(mediaBox: &mediaBox)
-        pdfContext.draw(image.cgImage!, in: mediaBox)
-        pdfContext.endPage()
-        
-        return pdfData
-    }
     
     //https://www.hackingwithswift.com/example-code/uikit/how-to-render-an-nsattributedstring-to-a-pdf
     //https://github.com/bvankuik/TestMakeAndPrintPDF/blob/master/TestMakeAndPrintPDF/PreviewViewController.swift
-    @objc public func addFormatter(printFormatter: UIPrintFormatter)-> NSMutableData?{
+    //https://developer.apple.com/documentation/uikit/uigraphicspdfrenderer#2863996
+    @objc public func render(printFormatter: UIPrintFormatter)-> NSMutableData?{
         let renderer = UIPrintPageRenderer()
         renderer.addPrintFormatter(printFormatter, startingAtPageAt: 0)
         // calculate the printable rect from the above two
@@ -126,3 +107,5 @@ public class PDFGenerator {
         }
     }
 }
+
+
